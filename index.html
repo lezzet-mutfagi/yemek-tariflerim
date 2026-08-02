@@ -32,7 +32,6 @@
       justify-content: center;
     }
 
-    /* Arka Plan Görsel Slaytı */
     .hero-slideshow {
       position: absolute;
       top: 0; left: 0;
@@ -56,7 +55,6 @@
       transform: scale(1.08);
     }
 
-    /* Turuncu & Sıcak Filtre Katmanı */
     .header-overlay {
       position: absolute;
       top: 0; left: 0;
@@ -66,7 +64,6 @@
       backdrop-filter: blur(2px);
     }
 
-    /* Canlı Saat Badge */
     .time-badge {
       position: absolute;
       top: 20px;
@@ -117,7 +114,6 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
-    /* Kategori Sekmeleri */
     .category-pills {
       display: flex;
       flex-wrap: wrap;
@@ -157,7 +153,6 @@
       transform: translateY(-2px);
     }
 
-    /* Organik Dalga Geçişi */
     .header-wave {
       position: absolute;
       bottom: 0;
@@ -179,10 +174,10 @@
       fill: var(--light-bg);
     }
 
-    /* Arama & Rastgele Tarif Alanı */
+    /* --- İNTERAKTİF BUTONLAR VE GÜNÜN TAVSİYESİ --- */
     .interactive-bar {
-      margin: -25px auto 40px auto;
-      max-width: 750px;
+      margin: -25px auto 35px auto;
+      max-width: 800px;
       padding: 0 20px;
       width: 100%;
       position: relative;
@@ -211,7 +206,7 @@
     }
 
     .search-container input:focus {
-      box-shadow: 0 15px 40px rgba(255, 94, 54, 0.22);
+      box-shadow: 0 15px 40px rgba(255, 94, 54, 0.25);
       transform: translateY(-2px);
     }
 
@@ -224,12 +219,18 @@
       color: #94a3b8;
     }
 
-    /* "Bugün Ne Pişirsem?" Şans Butonu */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
     .random-btn {
       background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
       color: white;
       border: none;
-      padding: 10px 24px;
+      padding: 11px 22px;
       border-radius: 30px;
       font-size: 13.5px;
       font-weight: 600;
@@ -242,16 +243,78 @@
     }
 
     .random-btn:hover {
-      transform: translateY(-2px) scale(1.02);
+      transform: translateY(-2px) scale(1.03);
       box-shadow: 0 10px 25px rgba(30, 41, 59, 0.3);
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     }
 
-    /* Ana İçerik Grid */
+    .dessert-btn {
+      background: linear-gradient(135deg, #d946ef 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 30px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(217, 70, 239, 0.25);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dessert-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(217, 70, 239, 0.4);
+    }
+
+    /* Günün Tavsiyesi Kutu Kartı */
+    .daily-recommendation {
+      background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%);
+      border: 2px dashed rgba(255, 94, 54, 0.4);
+      border-radius: 18px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 650px;
+      box-shadow: 0 8px 20px rgba(255, 94, 54, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    .daily-recommendation:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .daily-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .daily-badge {
+      background: var(--primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .daily-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--dark);
+    }
+
+    /* --- PARLAYAN KART TASARIMI --- */
     .main-wrapper {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px 60px 20px;
+      padding: 10px 20px 60px 20px;
       width: 100%;
       flex: 1;
     }
@@ -267,17 +330,36 @@
       background: var(--card-bg);
       border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: flex;
       flex-direction: column;
       border: 1px solid rgba(226, 232, 240, 0.8);
+      position: relative;
+    }
+
+    /* Kart Üzerinde Parlama (Shine) Efekti */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: 0.6s;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .card:hover::before {
+      left: 150%;
     }
 
     .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 22px 40px rgba(255, 94, 54, 0.12);
-      border-color: rgba(255, 94, 54, 0.3);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 35px rgba(255, 94, 54, 0.22);
+      border-color: rgba(255, 94, 54, 0.4);
     }
 
     .card-img-wrapper {
@@ -296,7 +378,7 @@
     }
 
     .card:hover img {
-      transform: scale(1.08);
+      transform: scale(1.1);
     }
 
     .card-body {
@@ -311,7 +393,7 @@
       font-size: 11px;
       font-weight: 700;
       color: var(--primary);
-      background: rgba(255, 94, 54, 0.09);
+      background: rgba(255, 94, 54, 0.1);
       padding: 5px 13px;
       border-radius: 20px;
       text-transform: uppercase;
@@ -357,7 +439,7 @@
 
     .btn:hover {
       background: var(--primary-hover);
-      box-shadow: 0 6px 20px rgba(255, 94, 54, 0.4);
+      box-shadow: 0 6px 20px rgba(255, 94, 54, 0.45);
     }
 
     /* Modal */
@@ -446,7 +528,6 @@
 <body>
 
   <header>
-    <!-- Ocaktan ve Leziz Yemeklerden Oluşan Otomatik Slayt -->
     <div class="hero-slideshow">
       <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1600&q=80');"></div>
       <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=80');"></div>
@@ -454,10 +535,8 @@
       <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80');"></div>
     </div>
     
-    <!-- Filtre Katmanı -->
     <div class="header-overlay"></div>
 
-    <!-- Canlı Saat & Tarih -->
     <div class="time-badge">
       <span id="liveClock">Yükleniyor...</span>
     </div>
@@ -467,7 +546,6 @@
       <h1>✨ Lezzet Mutfağı</h1>
       <p class="subtitle">Ev Yapımı En Özel & En Lezzetli Tarifler</p>
       
-      <!-- Sekme Kategorileri -->
       <div class="category-pills">
         <button class="pill-btn active" onclick="filterCategory('Tümü', this)">🍽️ Tümü</button>
         <button class="pill-btn" onclick="filterCategory('Karadeniz Mutfağı', this)">🌊 Karadeniz</button>
@@ -481,7 +559,6 @@
       </div>
     </div>
 
-    <!-- Yumuşak Organik Geçiş Dalgası -->
     <div class="header-wave">
       <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
         <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
@@ -489,15 +566,30 @@
     </div>
   </header>
 
-  <!-- İnteraktif Arama & Rastgele Tarif Butonu -->
+  <!-- İnteraktif Arama & Rastgele Butonlar & Günün Tavsiyesi -->
   <div class="interactive-bar">
     <div class="search-container">
       <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Tarif adı, malzeme veya kategori arayın...">
     </div>
-    <button class="random-btn" onclick="openRandomRecipe()">
-      <span>🎲 Bugün Ne Pişirsem? (Bana Tarif Öner)</span>
-    </button>
+
+    <div class="action-buttons">
+      <button class="random-btn" onclick="openRandomRecipe()">
+        <span>🎲 Bugün Ne Pişirsem?</span>
+      </button>
+      <button class="dessert-btn" onclick="openRandomDessert()">
+        <span>🍰 Tatlı Krizim Var!</span>
+      </button>
+    </div>
+
+    <!-- GÜNÜN TAVSİYESİ ALANI -->
+    <div class="daily-recommendation" id="dailyBox" style="display: none;">
+      <div class="daily-left">
+        <span class="daily-badge">🌟 GÜNÜN TAVSİYESİ</span>
+        <span class="daily-title" id="dailyTitle">Yükleniyor...</span>
+      </div>
+      <button class="btn" style="width: auto; padding: 6px 16px; font-size: 12px;" id="dailyBtn">İncele</button>
+    </div>
   </div>
 
   <div class="main-wrapper">
@@ -532,7 +624,6 @@
     let currentCategory = 'Tümü';
     const defaultImage = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80';
 
-    // --- OTOMATİK ARKA PLAN SLAYT DÖNGÜSÜ ---
     function startSlideshow() {
       const slides = document.querySelectorAll('.slide');
       let currentSlide = 0;
@@ -540,11 +631,10 @@
         slides[currentSlide].classList.remove('active');
         currentSlide = (currentSlide + 1) % slides.length;
         slides[currentSlide].classList.add('active');
-      }, 5000); // 5 saniyede bir yumuşak geçiş yap
+      }, 5000);
     }
     startSlideshow();
 
-    // --- CANLI SAAT VE KARŞILAMA MESAJI ---
     function updateClockAndGreeting() {
       const now = new Date();
       const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -566,7 +656,6 @@
     setInterval(updateClockAndGreeting, 1000);
     updateClockAndGreeting();
 
-    // --- TABLO VERİSİ YÜKLEME ---
     function loadRecipes() {
       Papa.parse(SHEET_CSV_URL, {
         download: true,
@@ -575,11 +664,23 @@
         complete: function(results) {
           allRecipes = results.data.filter(r => r.baslik && r.baslik.trim() !== "");
           applyFilters();
+          setupDailyRecommendation();
         },
         error: function(err) {
           document.getElementById('recipeContainer').innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #ef4444;'>Tarifler yüklenirken hata oluştu.</p>";
         }
       });
+    }
+
+    // GÜNÜN TAVSİYESİ SET ETME
+    function setupDailyRecommendation() {
+      if(allRecipes.length === 0) return;
+      const today = new Date().getDate();
+      const dailyRecipe = allRecipes[today % allRecipes.length];
+
+      document.getElementById('dailyTitle').innerText = dailyRecipe.baslik;
+      document.getElementById('dailyBtn').onclick = () => openModalByTitle(dailyRecipe.baslik);
+      document.getElementById('dailyBox').style.display = 'flex';
     }
 
     function renderRecipes(recipes) {
@@ -591,7 +692,7 @@
         return;
       }
 
-      recipes.forEach((r, index) => {
+      recipes.forEach((r) => {
         let imageUrl = (r.resimUrl && r.resimUrl.trim() !== "") ? r.resimUrl : defaultImage;
         
         const card = `
@@ -659,11 +760,21 @@
       document.getElementById('recipeModal').style.display = 'flex';
     }
 
-    // "Bugün Ne Pişirsem?" Şans Butonu Fonksiyonu
+    // RASTGELE TARİF (YEMEK)
     function openRandomRecipe() {
       if(allRecipes.length === 0) return;
       const randomIndex = Math.floor(Math.random() * allRecipes.length);
       openModalByTitle(allRecipes[randomIndex].baslik);
+    }
+
+    // RASTGELE TATLI TARİFİ
+    function openRandomDessert() {
+      if(allRecipes.length === 0) return;
+      const desserts = allRecipes.filter(r => r.kategori && (r.kategori.includes('Tatlı') || r.kategori.includes('Kurabiye')));
+      
+      const listToChoose = desserts.length > 0 ? desserts : allRecipes;
+      const randomIndex = Math.floor(Math.random() * listToChoose.length);
+      openModalByTitle(listToChoose[randomIndex].baslik);
     }
 
     function closeModal() {
