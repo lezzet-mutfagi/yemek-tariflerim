@@ -3,77 +3,326 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lezzet Mutfağı - Yemek Tarifleri Portalı</title>
-  <!-- CSV verilerini hatasız okumak için PapaParse kütüphanesi -->
+  <title>Lezzet Mutfağı - Nefis Yemek Tarifleri</title>
+  <!-- Google Fonts: Poppins & Playfair Display -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- CSV okumak için PapaParse kütüphanesi -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: #f8f9fa; color: #333; min-height: 100vh; display: flex; flex-direction: column; }
-    
-    header { background: #e74c3c; color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    header h1 { font-size: 28px; margin-bottom: 5px; }
-    header p { font-size: 14px; opacity: 0.9; }
-
-    .search-container { margin: 25px auto 10px auto; max-width: 600px; padding: 0 20px; width: 100%; }
-    .search-container input {
-      width: 100%; padding: 14px 22px; border-radius: 30px; border: 2px solid #e0e0e0; outline: none; font-size: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: border-color 0.2s;
+    :root {
+      --primary: #ff5e36;
+      --primary-hover: #e04822;
+      --accent: #ffb703;
+      --dark: #1e293b;
+      --light-bg: #fdfbf7;
+      --card-bg: #ffffff;
     }
-    .search-container input:focus { border-color: #e74c3c; }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; flex: 1; width: 100%; }
-    
-    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; display: flex; flex-direction: column; }
-    .card:hover { transform: translateY(-5px); }
-    .card img { width: 100%; height: 190px; object-fit: cover; background: #eee; }
-    
-    .card-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
-    .tag { font-size: 11px; font-weight: bold; color: #e74c3c; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-    .title { font-size: 18px; margin-bottom: 10px; color: #2c3e50; }
-    .desc { font-size: 13px; color: #666; line-height: 1.4; margin-bottom: 15px; flex: 1; }
-    
-    .btn { display: block; width: 100%; padding: 12px; background: #27ae60; color: white; text-align: center; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; transition: background 0.2s; }
-    .btn:hover { background: #219150; }
-    
-    /* Detay Modalı (Açılır Pencere) */
-    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; padding:20px; z-index: 1000; }
-    .modal-content { background:white; padding:30px; border-radius:12px; max-width:650px; width:100%; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-    .close { position:absolute; right:20px; top:15px; font-size:28px; cursor:pointer; color:#888; font-weight:bold; }
-    .close:hover { color:#333; }
-    
-    video { width: 100%; border-radius: 8px; margin-top: 15px; background: #000; }
-    
-    footer { background: #2c3e50; color: white; text-align: center; padding: 15px; font-size: 14px; margin-top: 30px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--light-bg); color: var(--dark); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Üst Alan (Hero Section) */
+    header {
+      background: linear-gradient(135deg, #ff6b4a 0%, #ff4b2b 100%);
+      color: white;
+      padding: 50px 20px 70px 20px;
+      text-align: center;
+      position: relative;
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 10px 25px rgba(255, 75, 43, 0.2);
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 15px;
+      opacity: 0.95;
+      font-weight: 300;
+    }
+
+    /* Arama Çubuğu */
+    .search-container {
+      margin: -30px auto 30px auto;
+      max-width: 650px;
+      padding: 0 20px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 16px 25px 16px 50px;
+      border-radius: 50px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .search-container input:focus {
+      box-shadow: 0 12px 35px rgba(255, 94, 54, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      font-size: 18px;
+      color: #94a3b8;
+    }
+
+    /* Grid Kartlar */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 20px 40px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(226, 232, 240, 0.7);
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+    }
+
+    .card-img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover img {
+      transform: scale(1.06);
+    }
+
+    .card-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .tag {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(255, 94, 54, 0.08);
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--dark);
+      line-height: 1.3;
+    }
+
+    .desc {
+      font-size: 13.5px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(255, 94, 54, 0.25);
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 18px rgba(255, 94, 54, 0.35);
+    }
+
+    /* Modal (Açılır Detay Penceresi) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 35px;
+      border-radius: 24px;
+      max-width: 650px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .close {
+      position: absolute;
+      right: 20px; top: 20px;
+      width: 36px; height: 36px;
+      background: #f1f5f9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      color: #64748b;
+      transition: all 0.2s;
+    }
+
+    .close:hover { background: #e2e8f0; color: #0f172a; }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: var(--dark);
+      margin-bottom: 15px;
+      padding-right: 30px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 14px;
+      margin: 15px 0;
+      background: #000;
+    }
+
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--primary);
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-text {
+      white-space: pre-line;
+      line-height: 1.7;
+      color: #334155;
+      font-size: 14.5px;
+      background: #f8fafc;
+      padding: 15px 20px;
+      border-radius: 12px;
+    }
+
+    footer {
+      background: #0f172a;
+      color: #94a3b8;
+      text-align: center;
+      padding: 25px;
+      font-size: 13px;
+      margin-top: auto;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🍳 Lezzet Mutfağı</h1>
-    <p>En Nefis Yemek & Tatlı Tarifleri</p>
+    <h1>✨ Lezzet Mutfağı</h1>
+    <p>Ev Yapımı En Özel & En Lezzetli Tarifler</p>
   </header>
 
   <div class="search-container">
-    <input type="text" id="searchInput" onkeyup="filterRecipes()" placeholder="Tarif, malzeme veya kategori ara...">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" onkeyup="filterRecipes()" placeholder="Tarif adı, malzeme veya kategori arayın...">
+    </div>
   </div>
 
   <div class="container" id="recipeContainer">
-    <p style="text-align: center; grid-column: 1/-1; padding: 40px; color: #777;">Tarifler yükleniyor, lütfen bekleyin...</p>
+    <p style="text-align: center; grid-column: 1/-1; padding: 40px; color: #64748b;">Leziz tarifler yükleniyor...</p>
   </div>
 
   <!-- Tarif Detay Modalı -->
   <div class="modal" id="recipeModal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <h2 id="mTitle" style="color:#2c3e50; margin-bottom: 10px;"></h2>
+      <h2 id="mTitle" class="modal-title"></h2>
       
       <video id="mVideo" controls style="display:none;"></video>
       
-      <h4 style="margin-top:20px; color:#e74c3c;">Malzemeler:</h4>
-      <p id="mIngredients" style="white-space: pre-line; margin-top: 5px; line-height: 1.6; color:#444;"></p>
+      <div class="section-subtitle">🛒 Malzemeler</div>
+      <p id="mIngredients" class="modal-text"></p>
       
-      <h4 style="margin-top:20px; color:#e74c3c;">Hazırlanışı:</h4>
-      <p id="mInstructions" style="white-space: pre-line; margin-top: 5px; line-height: 1.6; color:#444;"></p>
+      <div class="section-subtitle">👩‍🍳 Hazırlanışı</div>
+      <p id="mInstructions" class="modal-text"></p>
     </div>
   </div>
 
@@ -82,12 +331,11 @@
   </footer>
 
   <script>
-    // Google Sheets CSV Bağlantınız
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSDvUOzYlEGl7V822mbtjopaFFW833QuOLbUwB1MelQAMMYG50GUyDk2r3oeeiq0eBlYlD0hmwwpILS/pub?output=csv'; 
 
     let allRecipes = [];
+    const defaultImage = 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=600&q=80';
 
-    // Google Tablosundan Verileri Yükleme
     function loadRecipes() {
       Papa.parse(SHEET_CSV_URL, {
         download: true,
@@ -98,35 +346,38 @@
           renderRecipes(allRecipes);
         },
         error: function(err) {
-          document.getElementById('recipeContainer').innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: red;'>Veriler yüklenirken bir hata oluştu. Lütfen Google Sheets bağlantınızı kontrol edin.</p>";
+          document.getElementById('recipeContainer').innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #ef4444;'>Tarifler yüklenirken bir hata oluştu.</p>";
         }
       });
     }
 
-    // Kartları Ekrana Basma
     function renderRecipes(recipes) {
       const container = document.getElementById('recipeContainer');
       container.innerHTML = "";
 
       if(recipes.length === 0) {
-        container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #888;'>Henüz eklenmiş bir tarif bulunamadı veya aramanızla eşleşen sonuç yok.</p>";
+        container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Henüz bir tarif bulunamadı.</p>";
         return;
       }
 
       recipes.forEach((r, index) => {
-        // Eğer başlık boşsa o satırı atla
         if(!r.baslik || r.baslik.trim() === "") return;
 
-        const imageUrl = (r.resimUrl && r.resimUrl.trim() !== "") ? r.resimUrl : 'https://via.placeholder.com/400x250?text=Lezzet+Mutfagi';
+        // Görsel url kırıksa veya boşsa varsayılan görseli kullanır
+        let imageUrl = (r.resimUrl && r.resimUrl.trim() !== "") ? r.resimUrl : defaultImage;
         
         const card = `
           <div class="card">
-            <img src="${imageUrl}" alt="${r.baslik}">
+            <div class="card-img-wrapper">
+              <img src="${imageUrl}" alt="${r.baslik}" onerror="this.onerror=null;this.src='${defaultImage}';">
+            </div>
             <div class="card-body">
-              <span class="tag">${r.kategori || 'Genel'}</span>
+              <span class="tag">${r.kategori || 'Lezzet'}</span>
               <h3 class="title">${r.baslik}</h3>
-              <p class="desc">${r.aciklama || ''}</p>
-              <button class="btn" onclick="openModal(${index})">Tarifi Gör</button>
+              <p class="desc">${r.aciklama || 'Enfes lezzet tarifi.'}</p>
+              <button class="btn" onclick="openModal(${index})">
+                <span>Tarifi İncele</span> ➔
+              </button>
             </div>
           </div>
         `;
@@ -134,7 +385,6 @@
       });
     }
 
-    // Arama Fonksiyonu
     function filterRecipes() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const filtered = allRecipes.filter(r => 
@@ -145,12 +395,11 @@
       renderRecipes(filtered);
     }
 
-    // Modal Açma
     function openModal(index) {
       const r = allRecipes[index];
       document.getElementById('mTitle').innerText = r.baslik;
-      document.getElementById('mIngredients').innerText = r.malzemeler || 'Malzeme bilgisi eklenmemiş.';
-      document.getElementById('mInstructions').innerText = r.tarif || 'Hazırlanış bilgisi eklenmemiş.';
+      document.getElementById('mIngredients').innerText = r.malzemeler || 'Malzeme bilgisi bulunmuyor.';
+      document.getElementById('mInstructions').innerText = r.tarif || 'Hazırlanış detayı bulunmuyor.';
 
       const video = document.getElementById('mVideo');
       if(r.videoUrl && r.videoUrl.trim() !== "") {
@@ -164,14 +413,11 @@
       document.getElementById('recipeModal').style.display = 'flex';
     }
 
-    // Modal Kapatma
     function closeModal() {
       document.getElementById('recipeModal').style.display = 'none';
-      const video = document.getElementById('mVideo');
-      video.pause();
+      document.getElementById('mVideo').pause();
     }
 
-    // Modal dışına tıklayınca kapatma
     window.onclick = function(event) {
       const modal = document.getElementById('recipeModal');
       if (event.target === modal) {
@@ -179,7 +425,6 @@
       }
     }
 
-    // Sayfa açıldığında verileri getir
     loadRecipes();
   </script>
 </body>
