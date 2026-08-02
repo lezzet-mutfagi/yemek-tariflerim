@@ -22,7 +22,7 @@
     header {
       background: linear-gradient(135deg, #ff6b4a 0%, #ff4b2b 100%);
       color: white;
-      padding: 50px 20px 70px 20px;
+      padding: 40px 20px 60px 20px;
       text-align: center;
       position: relative;
       border-radius: 0 0 30px 30px;
@@ -32,18 +32,50 @@
     header h1 {
       font-family: 'Playfair Display', serif;
       font-size: 38px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     header p {
       font-size: 15px;
       opacity: 0.95;
       font-weight: 300;
+      margin-bottom: 20px;
+    }
+
+    /* Kategori Sekmeleri (Navigasyon) */
+    .category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover, .pill-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-weight: 600;
     }
 
     .search-container {
-      margin: -30px auto 30px auto;
-      max-width: 650px;
+      margin: -25px auto 30px auto;
+      max-width: 600px;
       padding: 0 20px;
       width: 100%;
       position: relative;
@@ -57,13 +89,13 @@
       border: none;
       outline: none;
       font-size: 15px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
       transition: all 0.3s ease;
       background: white;
     }
 
     .search-container input:focus {
-      box-shadow: 0 12px 35px rgba(255, 94, 54, 0.2);
+      box-shadow: 0 12px 30px rgba(255, 94, 54, 0.2);
       transform: translateY(-2px);
     }
 
@@ -76,15 +108,20 @@
       color: #94a3b8;
     }
 
-    .container {
+    /* Kart Ortalaması İçin Container */
+    .main-wrapper {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 10px 20px 40px 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 30px;
-      flex: 1;
+      padding: 10px 20px 50px 20px;
       width: 100%;
+      flex: 1;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 30px;
+      justify-content: center;
     }
 
     .card {
@@ -182,6 +219,7 @@
       box-shadow: 0 6px 18px rgba(255, 94, 54, 0.35);
     }
 
+    /* Modal (Pop-up) */
     .modal {
       display: none;
       position: fixed;
@@ -269,15 +307,30 @@
   <header>
     <h1>✨ Lezzet Mutfağı</h1>
     <p>Ev Yapımı En Özel & En Lezzetli Tarifler</p>
+    
+    <!-- Üst Sekme Kategorileri -->
+    <div class="category-pills">
+      <button class="pill-btn active" onclick="filterCategory('Tümü', this)">Tümü</button>
+      <button class="pill-btn" onclick="filterCategory('Karadeniz Mutfağı', this)">Karadeniz Mutfağı</button>
+      <button class="pill-btn" onclick="filterCategory('İç Anadolu Mutfağı', this)">İç Anadolu Mutfağı</button>
+      <button class="pill-btn" onclick="filterCategory('Ege Mutfağı', this)">Ege Mutfağı</button>
+      <button class="pill-btn" onclick="filterCategory('Doğu Mutfağı', this)">Doğu Mutfağı</button>
+      <button class="pill-btn" onclick="filterCategory('Sütlü Tatlılar', this)">Sütlü Tatlılar</button>
+      <button class="pill-btn" onclick="filterCategory('Şerbetli Tatlılar', this)">Şerbetli Tatlılar</button>
+      <button class="pill-btn" onclick="filterCategory('Kurabiyeler', this)">Kurabiyeler</button>
+      <button class="pill-btn" onclick="filterCategory('Tuzlular', this)">Tuzlular</button>
+    </div>
   </header>
 
   <div class="search-container">
     <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" onkeyup="filterRecipes()" placeholder="Tarif adı, malzeme veya kategori arayın...">
+    <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Tarif adı, malzeme veya kategori arayın...">
   </div>
 
-  <div class="container" id="recipeContainer">
-    <p style="text-align: center; grid-column: 1/-1; padding: 40px; color: #64748b;">Leziz tarifler yükleniyor...</p>
+  <div class="main-wrapper">
+    <div class="container" id="recipeContainer">
+      <p style="text-align: center; grid-column: 1/-1; padding: 40px; color: #64748b;">Leziz tarifler yükleniyor...</p>
+    </div>
   </div>
 
   <div class="modal" id="recipeModal">
@@ -303,6 +356,7 @@
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSDvUOzYlEGl7V822mbtjopaFFW833QuOLbUwB1MelQAMMYG50GUyDk2r3oeeiq0eBlYlD0hmwwpILS/pub?output=csv'; 
 
     let allRecipes = [];
+    let currentCategory = 'Tümü';
     const defaultImage = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80';
 
     function loadRecipes() {
@@ -312,7 +366,7 @@
         skipEmptyLines: true,
         complete: function(results) {
           allRecipes = results.data;
-          renderRecipes(allRecipes);
+          applyFilters();
         },
         error: function(err) {
           document.getElementById('recipeContainer').innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #ef4444;'>Tarifler yüklenirken hata oluştu.</p>";
@@ -325,7 +379,7 @@
       container.innerHTML = "";
 
       if(recipes.length === 0) {
-        container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Henüz bir tarif bulunamadı.</p>";
+        container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Bu kategoride henüz bir tarif bulunamadı.</p>";
         return;
       }
 
@@ -353,13 +407,33 @@
       });
     }
 
-    function filterRecipes() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = allRecipes.filter(r => 
-        (r.baslik && r.baslik.toLowerCase().includes(query)) || 
-        (r.malzemeler && r.malzemeler.toLowerCase().includes(query)) ||
-        (r.kategori && r.kategori.toLowerCase().includes(query))
-      );
+    function filterCategory(catName, btnElement) {
+      currentCategory = catName;
+      
+      // Aktif buton rengini güncelle
+      document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+      const filtered = allRecipes.filter(r => {
+        const matchesCategory = (currentCategory === 'Tümü') || (r.kategori && r.kategori.toLowerCase().trim() === currentCategory.toLowerCase().trim());
+        
+        const matchesSearch = (r.baslik && r.baslik.toLowerCase().includes(searchVal)) ||
+                              (r.malzemeler && r.malzemeler.toLowerCase().includes(searchVal)) ||
+                              (r.kategori && r.kategori.toLowerCase().includes(searchVal));
+
+        return matchesCategory && matchesSearch;
+      });
+
       renderRecipes(filtered);
     }
 
