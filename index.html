@@ -23,10 +23,10 @@
     header {
       position: relative;
       color: white;
-      padding: 30px 20px 75px 20px; /* Yukardan ve aşağıdan daraltıldı */
+      padding: 30px 20px 75px 20px;
       text-align: center;
       overflow: hidden;
-      min-height: 290px; /* Yükseklik dengelendi */
+      min-height: 290px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -97,10 +97,9 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    /* BÜYÜTÜLMÜŞ BAŞLIK */
     header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 58px; /* Punto büyütüldü */
+      font-size: 58px;
       font-weight: 900;
       letter-spacing: -1px;
       margin-bottom: 4px;
@@ -311,7 +310,7 @@
       color: var(--dark);
     }
 
-    /* --- PARLAYAN KART TASARIMI --- */
+    /* --- KART TASARIMI --- */
     .main-wrapper {
       max-width: 1200px;
       margin: 0 auto;
@@ -342,19 +341,15 @@
     .card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
       transition: 0.6s;
       z-index: 5;
       pointer-events: none;
     }
 
-    .card:hover::before {
-      left: 150%;
-    }
+    .card:hover::before { left: 150%; }
 
     .card:hover {
       transform: translateY(-10px) scale(1.02);
@@ -364,22 +359,18 @@
 
     .card-img-wrapper {
       position: relative;
-      width: 100%;
-      height: 210px;
+      width: 100%; height: 210px;
       background: #f1f5f9;
       overflow: hidden;
     }
 
     .card img {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: cover;
       transition: transform 0.6s ease;
     }
 
-    .card:hover img {
-      transform: scale(1.1);
-    }
+    .card:hover img { transform: scale(1.1); }
 
     .card-body {
       padding: 22px;
@@ -588,7 +579,7 @@
 
     <div class="daily-recommendation" id="dailyBox" style="display: none;">
       <div class="daily-left">
-        <span class="daily-badge">🌟 GÜNÜN TAVSİYESİ</span>
+        <span class="daily-badge" id="dailyBadge">🌟 GÜNÜN TAVSİYESİ</span>
         <span class="daily-title" id="dailyTitle">Yükleniyor...</span>
       </div>
       <button class="btn" style="width: auto; padding: 6px 16px; font-size: 12px;" id="dailyBtn">İncele</button>
@@ -659,6 +650,14 @@
     setInterval(updateClockAndGreeting, 1000);
     updateClockAndGreeting();
 
+    function getCurrentSeason() {
+      const month = new Date().getMonth(); // 0: Ocak ... 11: Aralık
+      if ([11, 0, 1].includes(month)) return 'kis';
+      if ([2, 3, 4].includes(month)) return 'ilkbahar';
+      if ([5, 6, 7].includes(month)) return 'yaz';
+      return 'sonbahar';
+    }
+
     function loadRecipes() {
       Papa.parse(SHEET_CSV_URL, {
         download: true,
@@ -677,9 +676,31 @@
 
     function setupDailyRecommendation() {
       if(allRecipes.length === 0) return;
-      const today = new Date().getDate();
-      const dailyRecipe = allRecipes[today % allRecipes.length];
 
+      const currentSeason = getCurrentSeason();
+      const today = new Date().getDate();
+
+      // Mevsime uygun olanları filtrele (Eğer Sheets'te 'mevsim' sütunu tanımlanmışsa)
+      let seasonalRecipes = allRecipes.filter(r => {
+        if (!r.mevsim || r.mevsim.trim() === "" || r.mevsim.toLowerCase() === "her_zaman") {
+          return true; // Mevsim belirtilmemişse her zaman tavsiye edilebilir
+        }
+        return r.mevsim.toLowerCase().trim() === currentSeason;
+      });
+
+      // Eğer o mevsime uygun hiç tarif bulunamazsa genel listeden seç
+      if (seasonalRecipes.length === 0) seasonalRecipes = allRecipes;
+
+      const dailyRecipe = seasonalRecipes[today % seasonalRecipes.length];
+
+      // Rozet yazısını mevsime göre süsle
+      let seasonName = "MEVSİM TAVSİYESİ";
+      if (currentSeason === 'yaz') seasonName = "☀️ YAZ TAVSİYESİ";
+      else if (currentSeason === 'kis') seasonName = "❄️ KIŞ TAVSİYESİ";
+      else if (currentSeason === 'ilkbahar') seasonName = "🌸 BAHAR TAVSİYESİ";
+      else if (currentSeason === 'sonbahar') seasonName = "🍂 SONBAHAR TAVSİYESİ";
+
+      document.getElementById('dailyBadge').innerText = seasonName;
       document.getElementById('dailyTitle').innerText = dailyRecipe.baslik;
       document.getElementById('dailyBtn').onclick = () => openModalByTitle(dailyRecipe.baslik);
       document.getElementById('dailyBox').style.display = 'flex';
