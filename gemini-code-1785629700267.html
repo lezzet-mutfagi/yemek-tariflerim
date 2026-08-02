@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canlı Yemek Tarifleri Portalı</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f4f6f8; color: #333; }
+    header { background: #e74c3c; color: white; padding: 20px; text-align: center; }
+    
+    .search-container { margin: 20px auto; max-width: 500px; padding: 0 15px; }
+    .search-container input {
+      width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; font-size: 16px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    
+    .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .card img { width: 100%; height: 180px; object-fit: cover; }
+    .card-body { padding: 15px; }
+    .tag { font-size: 11px; font-weight: bold; color: #e74c3c; text-transform: uppercase; }
+    .title { font-size: 18px; margin: 5px 0 10px 0; color: #2c3e50; }
+    .btn { display: block; width: 100%; padding: 10px; background: #27ae60; color: white; text-align: center; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+    
+    /* Modal */
+    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; padding:20px; z-index: 100; }
+    .modal-content { background:white; padding:25px; border-radius:10px; max-width:600px; width:100%; max-height:90vh; overflow-y:auto; position:relative; }
+    .close { position:absolute; right:15px; top:10px; font-size:24px; cursor:pointer; }
+    video { width: 100%; border-radius: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🍳 Tarif Dünyam (Canlı Yayın)</h1>
+  </header>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" onkeyup="filterRecipes()" placeholder="Tarif veya malzeme ara...">
+  </div>
+
+  <div class="container" id="recipeContainer">
+    <p>Tarifler yükleniyor...</p>
+  </div>
+
+  <!-- Detay Modalı -->
+  <div class="modal" id="recipeModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="mTitle"></h2>
+      <video id="mVideo" controls style="display:none;"></video>
+      <h4 style="margin-top:15px; color:#e74c3c;">Malzemeler:</h4>
+      <p id="mIngredients" style="white-space: pre-line; margin-bottom:15px;"></p>
+      <h4 style="color:#e74c3c;">Hazırlanışı:</h4>
+      <p id="mInstructions"></p>
+    </div>
+  </div>
+
+  <script>
+    // GOOGLE SHEETS CSV LINKINIZI BURAYA YAPIŞTIRIN
+    const SHEET_CSV_URL = 'BURAYA_GOOGLE_SHEETS_CSV_LINKINI_YAPIŞTIRIN'; 
+
+    let allRecipes = [];
+
+    // PapaParse veya basit CSV Parser ile veriyi çekme
+    async function loadRecipes() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const data = await response.text();
+        const rows = data.split('\n').slice(1); // İlk satırı (başlıkları) atla
+        
+        allRecipes = rows.map(row => {
+          const cols = row.split(','); // Basit ayrıştırma (virgüle göre)
+          return {
+            kategori: cols[1],
+            baslik: cols[2],
+            aciklama: cols[3],
+            malzemeler: cols[4],
+            tarif: cols[5],
+            resimUrl: cols[6],
+            videoUrl: cols[7]
+          };
+        });
+
+        renderRecipes(allRecipes);
+      } catch (err) {
+        document.getElementById('recipeContainer').innerHTML = "<p>Veriler yüklenirken bir hata oluştu. Lütfen CSV linkini kontrol edin.</p>";
+      }
+    }
+
+    function renderRecipes(recipes) {
+      const container = document.getElementById('recipeContainer');
+      container.innerHTML = "";
+
+      recipes.forEach((r, index) => {
+        if(!r.baslik) return;
+        const card = `
+          <div class="card">
+            <img src="${r.resimUrl || 'https://via.placeholder.com/300'}" alt="${r.baslik}">
+            <div class="card-body">
+              <span class="tag">${r.kategori}</span>
+              <h3 class="title">${r.baslik}</h3>
+              <p style="font-size:13px; color:#666;">${r.aciklama}</p>
+              <button class="btn" onclick="openModal(${index})">Tarifi Gör</button>
+            </div>
+          </div>
+        `;
+        container.innerHTML += card;
+      });
+    }
+
+    function filterRecipes() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allRecipes.filter(r => 
+        (r.baslik && r.baslik.toLowerCase().includes(query)) || 
+        (r.malzemeler && r.malzemeler.toLowerCase().includes(query)) ||
+        (r.kategori && r.kategori.toLowerCase().includes(query))
+      );
+      renderRecipes(filtered);
+    }
+
+    function openModal(index) {
+      const r = allRecipes[index];
+      document.getElementById('mTitle').innerText = r.baslik;
+      document.getElementById('mIngredients').innerText = r.malzemeler;
+      document.getElementById('mInstructions').innerText = r.tarif;
+
+      const video = document.getElementById('mVideo');
+      if(r.videoUrl && r.videoUrl.trim() !== "") {
+        video.src = r.videoUrl;
+        video.style.display = "block";
+      } else {
+        video.style.display = "none";
+      }
+
+      document.getElementById('recipeModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('recipeModal').style.display = 'none';
+      document.getElementById('mVideo').pause();
+    }
+
+    // Başlangıçta tarifleri yükle
+    // loadRecipes(); 
+  </script>
+</body>
+</html>
